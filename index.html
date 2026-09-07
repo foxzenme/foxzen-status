@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FoxZen Status</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  .lang-toggle {
+    position: fixed; top: 12px; right: 12px; z-index: 100;
+    display: inline-block; font-size: 0.85em;
+    background: rgba(255,255,255,0.92); padding: 4px 10px; border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+  .lang-toggle button {
+    background: none; border: none; padding: 2px 4px; cursor: pointer;
+    color: #999; font-size: 1em; font-family: inherit;
+  }
+  .lang-toggle button.active { color: #1a73e8; font-weight: bold; }
+  @media (max-width: 480px) {
+    .lang-toggle { top: 8px; right: 8px; font-size: 0.75em; padding: 3px 8px; }
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    max-width: 720px;
+    margin: 40px auto;
+    padding: 0 16px 60px;
+    line-height: 1.6;
+    color: #222;
+    background: #fff;
+  }
+  h1 { font-size: 1.5em; margin-bottom: 4px; }
+  .subtitle { color: #666; font-size: 0.9em; margin-bottom: 24px; }
+  .browser-note {
+    background: #f4f6f8;
+    border: 1px solid #dde3e8;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.85em;
+    color: #444;
+    margin-bottom: 28px;
+  }
+  h2 {
+    font-size: 1.1em;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 6px;
+    margin-top: 36px;
+  }
+  .row { border-bottom: 1px solid #eee; padding: 12px 0; }
+  .row:last-child { border-bottom: none; }
+  .row-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .name { font-weight: 600; }
+  .badge {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 2px 10px;
+    font-size: 0.8em;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge.checking { background: #eee; color: #666; }
+  .badge.ok { background: #e3f6e9; color: #1a7f3c; }
+  .badge.fail { background: #fbe6e6; color: #b3261e; }
+  .badge.unknown { background: #eee; color: #666; }
+  .detail { margin-top: 4px; font-size: 0.9em; color: #333; }
+  .meta {
+    margin-top: 4px;
+    font-size: 0.78em;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  a { color: #1a5fb4; }
+  .official-link { display: inline-block; margin-top: 6px; font-size: 0.9em; }
+  .cross-link { margin: 0 0 28px; font-size: 0.9em; }
+  footer { margin-top: 48px; font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+<div class="lang-toggle">
+  <button type="button" data-lang-btn="zh" aria-label="切换到中文">中</button> / <button type="button" data-lang-btn="en" aria-label="Switch to English">EN</button>
+</div>
+<h1>FoxZen Status</h1>
+<div class="subtitle">status.foxzen.me &mdash; <span data-i18n="status_subtitle">现在怎么样</span></div>
+
+<div class="browser-note">
+  <span data-i18n="browser_note_prefix">下面所有检查结果都是在你打开这个页面时，由</span><strong data-i18n="browser_note_strong">你的浏览器</strong><span data-i18n="browser_note_suffix">实时发起的，不是某个中心化监控服务器上跑出来的结果——它反映的是"你的设备现在能不能连上"，而不是一个绝对的全局判断。</span>
+</div>
+
+<p class="cross-link"><a href="https://update.foxzen.me/" data-i18n="view_updates_link">查看最近的更新 →</a></p>
+
+<h2 data-i18n="section_foxzen">Foxzen</h2>
+
+<div class="row" data-role="status-row" id="row-mirror">
+  <div class="row-head">
+    <span class="name">foxzen.me / mirror.foxzen.me</span>
+    <span class="badge checking">检测中…</span>
+  </div>
+  <div class="detail">检测中…</div>
+  <div class="meta"><span class="source" data-i18n="source_mirror">来源：你的浏览器 → mirror.foxzen.me/api/health</span><span class="checked-at"></span></div>
+</div>
+
+<div class="row" data-role="status-row" id="row-backup">
+  <div class="row-head">
+    <span class="name">backup.foxzen.me</span>
+    <span class="badge checking">检测中…</span>
+  </div>
+  <div class="detail">检测中…</div>
+  <div class="meta"><span class="source" data-i18n="source_backup">来源：你的浏览器 → backup.foxzen.me/api/health（直连，绕开Cloudflare）</span><span class="checked-at"></span></div>
+</div>
+
+<div class="row" data-role="status-row" id="row-github">
+  <div class="row-head">
+    <span class="name">github.foxzen.me</span>
+    <span class="badge checking">检测中…</span>
+  </div>
+  <div class="detail">检测中…</div>
+  <div class="meta"><span class="source" data-i18n="source_github">来源：你的浏览器 → mirror.foxzen.me/api/refresh/github/status + github.foxzen.me可达性</span><span class="checked-at"></span></div>
+</div>
+
+<div class="row" data-role="status-row" id="row-cf">
+  <div class="row-head">
+    <span class="name">cf.foxzen.me</span>
+    <span class="badge checking">检测中…</span>
+  </div>
+  <div class="detail">检测中…</div>
+  <div class="meta"><span class="source" data-i18n="source_cf">来源：你的浏览器 → mirror.foxzen.me/api/refresh/cf/status + cf.foxzen.me可达性</span><span class="checked-at"></span></div>
+</div>
+
+<div class="row" data-role="status-row" id="row-greencloud">
+  <div class="row-head">
+    <span class="name" data-i18n="name_greencloud">GreenCloud（服务器基础设施）</span>
+    <span class="badge checking">检测中…</span>
+  </div>
+  <div class="detail">检测中…</div>
+  <div class="meta"><span class="source" data-i18n="source_greencloud">由上面mirror.foxzen.me和backup.foxzen.me的检测结果推导得出</span><span class="checked-at"></span></div>
+</div>
+
+<div class="row" data-role="status-row" id="row-hetzner">
+  <div class="row-head">
+    <span class="name" data-i18n="name_hetzner">Hetzner（备份存储）</span>
+    <span class="badge unknown" data-i18n="badge_no_live_check">无实时检测</span>
+  </div>
+  <div class="detail" data-i18n="detail_hetzner">Hetzner在这里只用作长期备份存储，没有可公开访问的健康检查接口，因此这里不提供实时探测结果。</div>
+  <div class="meta"><span class="source" data-i18n="source_none">没有可用的数据来源</span><span class="checked-at"></span></div>
+</div>
+
+<h2 data-i18n="section_external">External Platform Status</h2>
+
+<div class="row" data-role="status-row" id="row-github-official">
+  <div class="row-head">
+    <span class="name" data-i18n="name_github_official">GitHub 官方状态</span>
+    <span class="badge checking">加载中…</span>
+  </div>
+  <div class="detail">加载中…</div>
+  <a class="official-link" href="https://www.githubstatus.com/" target="_blank" rel="noopener" data-i18n="link_github_official">查看 GitHub 官方状态页 →</a>
+  <div class="meta"><span class="source" data-i18n="source_github_official">来源：githubstatus.com（GitHub官方状态页）</span><span class="checked-at"></span></div>
+</div>
+
+<div class="row" data-role="status-row" id="row-cloudflare-official">
+  <div class="row-head">
+    <span class="name" data-i18n="name_cloudflare_official">Cloudflare 官方状态</span>
+    <span class="badge checking">加载中…</span>
+  </div>
+  <div class="detail">加载中…</div>
+  <a class="official-link" href="https://www.cloudflarestatus.com/" target="_blank" rel="noopener" data-i18n="link_cloudflare_official">查看 Cloudflare 官方状态页 →</a>
+  <div class="meta"><span class="source" data-i18n="source_cloudflare_official">来源：cloudflarestatus.com（Cloudflare官方状态页）</span><span class="checked-at"></span></div>
+</div>
+
+<footer data-i18n="footer_text">
+  本页是一个静态、只读的状态看板，不能触发任何刷新、同步或发布操作。
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var MIRROR_HEALTH_URL = "https://mirror.foxzen.me/api/health";
+  var BACKUP_HEALTH_URL = "https://backup.foxzen.me/api/health";
+  var GITHUB_PAGES_URL = "https://github.foxzen.me/";
+  var CF_PAGES_URL = "https://cf.foxzen.me/";
+  var GITHUB_STATUS_API = "https://www.githubstatus.com/api/v2/summary.json";
+  var CLOUDFLARE_STATUS_API = "https://www.cloudflarestatus.com/api/v2/summary.json";
+
+  // 全站UI国际化：跟fetch_blog.py::I18N_BLOCK等其它四份独立实现同一套
+  // localStorage key/检测算法/data-i18n约定，这是第六份独立实现（本页面
+  // 是自包含的单文件，不依赖任何外部JS，见文件头docstring）。
+  //
+  // 范围说明（已在最终报告里披露）：只翻译不会被下面setRow()动态覆盖的
+  // 静态UI文案（标题/副标题/小节标题/来源说明/页脚/官方链接）以及setRow()
+  // 接收到的、来自FoxZen自己代码的固定徽章词（OK/Unreachable/Reported/
+  // Unavailable here等）——checkHealthEndpoint/checkPagesTarget/
+  // checkGreenCloud里拼出来的完整诊断句子（"last sync: ..."、
+  // "reachability: ..."等）本次不做逐句翻译：这些句子由多段条件判断动态
+  // 拼接，逐句模板化的改动量和这个页面的次要程度不成比例，保持英文原样，
+  // 不影响其准确性。r.data.status.description（GitHub/Cloudflare官方状态
+  // API返回的原始文字）任何时候都不翻译/改写。
+  var STATUS_STRINGS = {
+    zh: {
+      status_subtitle: "现在怎么样",
+      browser_note_prefix: "下面所有检查结果都是在你打开这个页面时，由",
+      browser_note_strong: "你的浏览器",
+      browser_note_suffix: "实时发起的，不是某个中心化监控服务器上跑出来的结果——它反映的是“你的设备现在能不能连上”，而不是一个绝对的全局判断。",
+      view_updates_link: "查看最近的更新 →",
+      section_foxzen: "Foxzen",
+      section_external: "External Platform Status",
+      name_greencloud: "GreenCloud（服务器基础设施）",
+      name_hetzner: "Hetzner（备份存储）",
+      name_github_official: "GitHub 官方状态",
+      name_cloudflare_official: "Cloudflare 官方状态",
+      badge_no_live_check: "无实时检测",
+      detail_hetzner: "Hetzner在这里只用作长期备份存储，没有可公开访问的健康检查接口，因此这里不提供实时探测结果。",
+      source_mirror: "来源：你的浏览器 → mirror.foxzen.me/api/health",
+      source_backup: "来源：你的浏览器 → backup.foxzen.me/api/health（直连，绕开Cloudflare）",
+      source_github: "来源：你的浏览器 → mirror.foxzen.me/api/refresh/github/status + github.foxzen.me可达性",
+      source_cf: "来源：你的浏览器 → mirror.foxzen.me/api/refresh/cf/status + cf.foxzen.me可达性",
+      source_greencloud: "由上面mirror.foxzen.me和backup.foxzen.me的检测结果推导得出",
+      source_none: "没有可用的数据来源",
+      source_github_official: "来源：githubstatus.com（GitHub官方状态页）",
+      source_cloudflare_official: "来源：cloudflarestatus.com（Cloudflare官方状态页）",
+      link_github_official: "查看 GitHub 官方状态页 →",
+      link_cloudflare_official: "查看 Cloudflare 官方状态页 →",
+      footer_text: "本页是一个静态、只读的状态看板，不能触发任何刷新、同步或发布操作。",
+      badge_ok: "正常",
+      badge_unreachable: "无法访问",
+      badge_reported: "已报告",
+      badge_unavailable_here: "此处不可用",
+      checked_at_prefix: "检测时间 ",
+    },
+    en: {
+      status_subtitle: "what's the current state",
+      browser_note_prefix: "All checks below run live in ",
+      browser_note_strong: "your browser",
+      browser_note_suffix: " when this page loads. They reflect what your device can currently reach, not a centralized monitoring verdict.",
+      view_updates_link: "View recent updates →",
+      section_foxzen: "Foxzen",
+      section_external: "External Platform Status",
+      name_greencloud: "GreenCloud (server infrastructure)",
+      name_hetzner: "Hetzner (backup storage)",
+      name_github_official: "Official GitHub Status",
+      name_cloudflare_official: "Official Cloudflare Status",
+      badge_no_live_check: "No live check",
+      detail_hetzner: "Used only for long-term backup storage; it has no public health-check endpoint, so no live probe is shown here.",
+      source_mirror: "Source: your browser → mirror.foxzen.me/api/health",
+      source_backup: "Source: your browser → backup.foxzen.me/api/health (direct, bypasses Cloudflare)",
+      source_github: "Source: your browser → mirror.foxzen.me/api/refresh/github/status + github.foxzen.me reachability",
+      source_cf: "Source: your browser → mirror.foxzen.me/api/refresh/cf/status + cf.foxzen.me reachability",
+      source_greencloud: "Derived from the mirror.foxzen.me and backup.foxzen.me checks above",
+      source_none: "No data source available",
+      source_github_official: "Source: githubstatus.com (GitHub's own status page)",
+      source_cloudflare_official: "Source: cloudflarestatus.com (Cloudflare's own status page)",
+      link_github_official: "View official GitHub status →",
+      link_cloudflare_official: "View official Cloudflare status →",
+      footer_text: "This page is a static, read-only status dashboard. It cannot trigger any refresh, sync, or deploy action.",
+      badge_ok: "OK",
+      badge_unreachable: "Unreachable",
+      badge_reported: "Reported",
+      badge_unavailable_here: "Unavailable here",
+      checked_at_prefix: "Checked at ",
+    },
+  };
+
+  var FOXZEN_LANG_KEY = "foxzen_lang";
+
+  function detectDefaultFoxzenLang() {
+    var langs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || ""];
+    for (var i = 0; i < langs.length; i++) {
+      if (/^zh/i.test(langs[i])) return "zh";
+    }
+    return "en";
+  }
+
+  function getFoxzenLang() {
+    try {
+      var saved = localStorage.getItem(FOXZEN_LANG_KEY);
+      if (saved === "zh" || saved === "en") return saved;
+    } catch (e) {}
+    return detectDefaultFoxzenLang();
+  }
+
+  var FOXZEN_LANG = getFoxzenLang();
+
+  function statusT(key) {
+    var dict = STATUS_STRINGS[FOXZEN_LANG] || STATUS_STRINGS.en;
+    return dict[key];
+  }
+
+  function applyStatusI18n() {
+    var dict = STATUS_STRINGS[FOXZEN_LANG] || STATUS_STRINGS.en;
+    var nodes = document.querySelectorAll("[data-i18n]");
+    for (var i = 0; i < nodes.length; i++) {
+      var key = nodes[i].getAttribute("data-i18n");
+      if (typeof dict[key] === "string") nodes[i].textContent = dict[key];
+    }
+    document.documentElement.setAttribute("lang", FOXZEN_LANG === "zh" ? "zh-CN" : "en");
+    var btns = document.querySelectorAll("[data-lang-btn]");
+    for (var j = 0; j < btns.length; j++) {
+      if (btns[j].getAttribute("data-lang-btn") === FOXZEN_LANG) btns[j].classList.add("active");
+      else btns[j].classList.remove("active");
+    }
+  }
+
+  function setFoxzenLang(lang) {
+    if (lang !== "zh" && lang !== "en") return;
+    FOXZEN_LANG = lang;
+    try { localStorage.setItem(FOXZEN_LANG_KEY, lang); } catch (e) {}
+    applyStatusI18n();
+  }
+
+  function wireLangToggle() {
+    var btns = document.querySelectorAll("[data-lang-btn]");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener("click", function (e) {
+        setFoxzenLang(e.currentTarget.getAttribute("data-lang-btn"));
+      });
+    }
+  }
+
+  function refreshStatusUrl(target) {
+    return "https://mirror.foxzen.me/api/refresh/" + target + "/status";
+  }
+
+  // badgeText/detailText由各check*函数拼好传入——只有badgeText在下面几个
+  // 调用点传入的是FoxZen自己代码写死的固定英文词（OK/Unreachable等）时才
+  // 值得做语言相关处理，那几个调用点已经直接改成传statusT(...)对应的当前
+  // 语言文案（见checkHealthEndpoint/checkPagesTarget/checkGreenCloud/
+  // checkOfficialStatus），这里的setRow()本身保持"传什么就显示什么"，
+  // 不在这一层做任何字符串判断/替换——避免不小心把第三方状态API返回的
+  // 原始文字(r.data.status.description)也当成"已知词"错误替换掉。
+  function setRow(id, state, badgeText, detailText) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var badge = el.querySelector(".badge");
+    var detail = el.querySelector(".detail");
+    var checkedAt = el.querySelector(".checked-at");
+    badge.className = "badge " + state;
+    badge.textContent = badgeText;
+    detail.textContent = detailText;
+    if (checkedAt) checkedAt.textContent = statusT("checked_at_prefix") + new Date().toLocaleTimeString();
+  }
+
+  function withTimeout(promise, ms) {
+    return new Promise(function (resolve) {
+      var done = false;
+      var timer = setTimeout(function () {
+        if (!done) { done = true; resolve({ timedOut: true }); }
+      }, ms);
+      promise.then(function (v) {
+        if (!done) { done = true; clearTimeout(timer); resolve(v); }
+      }, function () {
+        if (!done) { done = true; clearTimeout(timer); resolve({ timedOut: true }); }
+      });
+    });
+  }
+
+  function fetchJSON(url, ms) {
+    return withTimeout(
+      fetch(url, { credentials: "omit" }).then(function (res) {
+        if (!res.ok) return { ok: false, httpStatus: res.status, data: null };
+        return res.json().then(function (data) {
+          return { ok: true, httpStatus: res.status, data: data };
+        }, function () {
+          return { ok: false, httpStatus: res.status, data: null };
+        });
+      }, function () {
+        return { ok: false, httpStatus: null, data: null };
+      }),
+      ms
+    ).then(function (r) {
+      return r.timedOut ? { ok: false, httpStatus: null, data: null, timedOut: true } : r;
+    });
+  }
+
+  function pingReachable(url, ms) {
+    return withTimeout(
+      fetch(url, { mode: "no-cors", credentials: "omit" }).then(function () {
+        return true;
+      }, function () {
+        return false;
+      }),
+      ms
+    ).then(function (r) {
+      return r === true;
+    });
+  }
+
+  function fmtPercent(ratio) {
+    return typeof ratio === "number" ? (ratio * 100).toFixed(1) + "%" : "unknown";
+  }
+
+  function checkHealthEndpoint(rowId, url, sourceLabel) {
+    return fetchJSON(url, 8000).then(function (r) {
+      if (r.ok && r.data) {
+        var d = r.data;
+        var visits = d.visit_stats && typeof d.visit_stats.today === "number" ? d.visit_stats.today : "unknown";
+        setRow(rowId, "ok", statusT("badge_ok"),
+          "posts: " + (d.post_count != null ? d.post_count : "unknown") +
+          " · visits today: " + visits +
+          " · disk used: " + fmtPercent(d.disk_usage_ratio));
+        return true;
+      }
+      var reason = r.httpStatus ? ("HTTP " + r.httpStatus) : "network error / timeout, checked from your browser";
+      setRow(rowId, "fail", statusT("badge_unreachable"), sourceLabel + " did not return a healthy response (" + reason + ").");
+      return false;
+    });
+  }
+
+  function checkPagesTarget(rowId, target, pageUrl, pageName) {
+    var statusPromise = fetchJSON(refreshStatusUrl(target), 8000);
+    var reachPromise = pingReachable(pageUrl, 8000);
+    return Promise.all([statusPromise, reachPromise]).then(function (results) {
+      var statusResult = results[0];
+      var reachable = results[1];
+      var parts = [];
+      if (statusResult.ok && statusResult.data && statusResult.data.last_result) {
+        var lr = statusResult.data.last_result;
+        parts.push("last sync: " + (lr.status || "unknown") +
+          (lr.finished_at ? " at " + lr.finished_at : "") +
+          (statusResult.data.last_result_is_current === false ? " (stale — a newer attempt did not finish)" : ""));
+      } else if (statusResult.ok) {
+        parts.push("last sync: no record yet");
+      } else {
+        parts.push("last sync status: could not be read from your browser");
+      }
+      parts.push(pageName + " reachability: " + (reachable ? "OK (browser received a response)" : "failed (network error, from your browser)"));
+      var state = reachable ? "ok" : "fail";
+      setRow(rowId, state, reachable ? statusT("badge_ok") : statusT("badge_unreachable"), parts.join(" · "));
+      return reachable;
+    });
+  }
+
+  function checkGreenCloud(mirrorOkPromise, backupOkPromise) {
+    Promise.all([mirrorOkPromise, backupOkPromise]).then(function (results) {
+      var mirrorOk = results[0];
+      var backupOk = results[1];
+      if (mirrorOk && backupOk) {
+        setRow("row-greencloud", "ok", statusT("badge_ok"), "Reachable via both mirror.foxzen.me and backup.foxzen.me.");
+      } else if (mirrorOk && !backupOk) {
+        setRow("row-greencloud", "ok", statusT("badge_ok"), "Reachable via mirror.foxzen.me. backup.foxzen.me path failed (see above).");
+      } else if (!mirrorOk && backupOk) {
+        setRow("row-greencloud", "ok", statusT("badge_ok"),
+          "Reachable via backup.foxzen.me. mirror.foxzen.me path failed — since backup.foxzen.me bypasses Cloudflare, " +
+          "this can mean the issue is on the Cloudflare side rather than GreenCloud itself.");
+      } else {
+        setRow("row-greencloud", "fail", statusT("badge_unreachable"), "Both mirror.foxzen.me and backup.foxzen.me checks failed from your browser.");
+      }
+    });
+  }
+
+  function checkOfficialStatus(rowId, apiUrl) {
+    fetchJSON(apiUrl, 8000).then(function (r) {
+      if (r.ok && r.data && r.data.status) {
+        // r.data.status.description是GitHub/Cloudflare官方状态API返回的原始
+        // 文字，不属于本次UI国际化的翻译对象（同一条规则贯穿整个status/
+        // update页面：数据来源原文永远保持原样，只翻译UI标签），只在它缺失
+        // 时才退回下面按语言翻译过的statusT("badge_reported")兜底文案。
+        setRow(rowId, "ok", r.data.status.description || statusT("badge_reported"),
+          "Live from the official status API: " + (r.data.status.description || "see link below") + ".");
+      } else {
+        setRow(rowId, "unknown", statusT("badge_unavailable_here"),
+          "Could not load the live official status feed from your browser. Use the official link below — it is always authoritative.");
+      }
+    });
+  }
+
+  function main() {
+    applyStatusI18n();
+    wireLangToggle();
+    var mirrorOk = checkHealthEndpoint("row-mirror", MIRROR_HEALTH_URL, "mirror.foxzen.me");
+    var backupOk = checkHealthEndpoint("row-backup", BACKUP_HEALTH_URL, "backup.foxzen.me");
+    checkGreenCloud(mirrorOk, backupOk);
+    checkPagesTarget("row-github", "github", GITHUB_PAGES_URL, "github.foxzen.me");
+    checkPagesTarget("row-cf", "cf", CF_PAGES_URL, "cf.foxzen.me");
+    checkOfficialStatus("row-github-official", GITHUB_STATUS_API);
+    checkOfficialStatus("row-cloudflare-official", CLOUDFLARE_STATUS_API);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", main);
+  } else {
+    main();
+  }
+})();
+</script>
+</body>
+</html>
